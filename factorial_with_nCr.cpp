@@ -16,19 +16,13 @@ int pw(int x,int n)
     return res;
 }
 
-
-int modinv(int x)
-{
-	return pow(x,M-2,M);
-}
-
 void compute_fact()
 {
 	fact[0]=1;
 	for(int i=2;i<N;++i)
         fact[i]=(fact[i-1]*i)%M;
 
-	invfact[N-1]=modinv(fact[N-1]);
+	invfact[N-1]=pw(fact[N-1],M-2);
 	for(int i=N-2;i>=0;--i)
         invfact[i]=(invfact[i+1]*(i+1))%M;
 }
@@ -38,8 +32,8 @@ int nCr(int n,int r)
 	if(n<r)
 		return 0;
 
-	int res=(fact[n]*fact[r])%M;
-	res=(res*fact[n-r])%M;
+	int res=(fact[n]*invfact[r])%M;
+	res=(res*invfact[n-r])%M;
 
 	return res;
 }

@@ -26,7 +26,6 @@ void euler(int start)
 
         if(!fl)
         {
-            // add this node to the path
             // euler_path.pb(x);
 
             stk.pop();

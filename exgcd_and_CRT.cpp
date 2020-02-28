@@ -27,13 +27,13 @@ void CRT()
         int x1=tmp.x;
         int d=tmp.d;
 
-        if((rem[i]-res)%d != 0)
+        if((rem[i]-res)%d)
         {
             cout<<"no solution";
             return;
         }
 
-        res=take_mod(res + (x1*((rem[i]-res)/d))%(num[i]/d)*l, l*(num[i]/d));
+        res=take_mod( res + (x1*((rem[i]-res)/d))%(num[i]/d) * l , l*(num[i]/d) );
         l=l*(num[i]/d);
     }
 

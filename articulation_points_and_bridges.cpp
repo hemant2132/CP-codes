@@ -1,37 +1,38 @@
-int tim=0;
-
-vector<int> v[N],disc(N),low(N,inf),par(N,-1),ap;
+vector<int> v[N],disc(N),low(N);
 vector<bool> vis(N,0);
-vector<pair<int,int>> be;
 
-void dfs(int x)
+vector<int> ap;                     //articulation points
+vector<pair<int,int>> be;           //bridges
+
+int tim=1;
+
+void dfs(int x,int p)
 {
     vis[x]=1;
-    disc[x]=low[x]=++tim;
+    disc[x]=low[x]=tim++;
     int child=0;
 
-    for(auto u:v[x])
+    for(auto c:v[x])
     {
-        if(!vis[u])
+        if(c==p)
+            continue;
+
+        if(!vis[c])
         {
             ++child;
-            par[u]=x;
 
-            dfs(u);
+            dfs(c,x);
 
-            low[x]=min(low[x],low[u]);
+            low[x]=min(low[x],low[c]);
 
-            if(par[x]==-1 && child>1)
-                ap.pb(x);
-            if(par[x]!=-1 && low[u]>=disc[x])
+            if((p==-1 && child>1) || (p!=-1 && low[c]>=disc[x]))
                 ap.pb(x);
 
-            if(low[u]>disc[x])
-                be.pb({min(u,x),max(u,x)});
-
+            if(low[c]>disc[x])
+                be.pb({min(c,x),max(c,x)});
         }
-        else if(par[x]!=u)
-            low[x]=min(low[x],disc[u]);
+        else
+            low[x]=min(low[x],disc[c]);
     }
 }
 

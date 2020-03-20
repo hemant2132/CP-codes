@@ -1,5 +1,5 @@
 
-int cnt,fl;
+int fl;
 
 vector<int> v[N],w[N],vis(N,0);
 stack<int> stk;

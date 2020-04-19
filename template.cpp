@@ -41,7 +41,7 @@ typedef long long ll;
 typedef long double ld;
 
 const ld pi=acos(-1);
-const ll inf=LLONG_MAX,M=1e9+7;
+const ll inf=1e18,M=1e9+7;
 const int N=1;
 
 void solve()

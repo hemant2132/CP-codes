@@ -1,18 +1,25 @@
 /*
-* Need to add lazy segtree,
-* then range update utility function can also be added
+    -> Heavy Light Decomposition
+    -> ref: https://blog.anudeep2011.com/heavy-light-decomposition/
+
+    -> supports range updates and range queries on paths in a tree, through
+       dividing the tree into chains
+    -> for a query/update, we go upwards visiting at most "logn" chains
+
 */
 
-vector<pii> v[N],edges;
-vector<int> par(N),lev(N),sz(N);
-vector<int> base(N),head(N),id(N),pos(N);
-int anc[N][15];
+vector<int> v[N];
+vector<int> par(N,-1),lev(N),sub(N);
+vector<int> base(N),head(N,-1),id(N,-1),pos(N,-1);
+// base array, head of chain, chain no. of a node, position of a node in base[]
+
 int tree[4*N];
+int lazy[4*N];
 
 int n;
-int chain,tim;
+int chain=0,tim=0;
 
-//initialisation
+// initialisation
 
 void dfs(int x,int p)
 {
@@ -20,63 +27,19 @@ void dfs(int x,int p)
         lev[x]=lev[p]+1;
 
     par[x]=p;
-    sz[x]=1;
+    sub[x]=1;
 
     for(auto c:v[x])
     {
-        if(c.F!=p)
+        if(c!=p)
         {
-            dfs(c.F,x);
-            sz[x]+=sz[c.F];
+            dfs(c,x);
+            sub[x]+=sub[c];
         }
     }
 }
 
-//lca
-
-void compute(int n)
-{
-    for(int i=1;i<=n;++i)
-        anc[i][0]=par[i];
-
-    for(int j=1;(1<<j)<=n;++j)
-    {
-        for(int i=1;i<=n;++i)
-        {
-            if(anc[i][j-1]!=-1)
-                anc[i][j]=anc[anc[i][j-1]][j-1];
-        }
-    }
-}
-
-int lca(int a,int b)
-{
-    if(lev[a]<lev[b])
-        swap(a,b);
-
-    int lg;
-    for(lg=1;(1<<lg)<=lev[a];++lg);
-    --lg;
-
-    for(int i=lg;i>=0;--i)
-    {
-        if(lev[a]-(1<<i)>=lev[b])
-            a=anc[a][i];
-    }
-
-    if(a==b)
-        return a;
-
-    for(int i=lg;i>=0;--i)
-    {
-        if(anc[a][i]!=-1 && anc[a][i]!=anc[b][i])
-            a=anc[a][i],b=anc[b][i];
-    }
-
-    return anc[a][0];
-}
-
-//segment tree
+// lazy segment tree
 
 void build(int node,int start,int en)
 {
@@ -87,45 +50,73 @@ void build(int node,int start,int en)
         int mid=(start+en)/2;
         build(2*node,start,mid);
         build(2*node+1,mid+1,en);
-        tree[node]=max(tree[2*node],tree[2*node+1]);
+        tree[node]=tree[2*node]+tree[2*node+1];
     }
 }
 
-void update(int node,int start,int en,int idx,int val)
+void updateRange(int node,int beg,int en,int l,int r,int val)
 {
-    if(start==en)
+    if(lazy[node]!=0)
     {
-        base[idx]=val;
-        tree[node]=val;
+        tree[node]+=(en-beg+1)*lazy[node];
+        if(beg!=en)
+        {
+            lazy[2*node]+=lazy[node];
+            lazy[2*node+1]+=lazy[node];
+        }
+        lazy[node]=0;
     }
-    else
-    {
-        int mid=(start+en)/2;
-        if(start<=idx and idx<=mid)
-            update(2*node,start,mid,idx,val);
-        else
-            update(2*node+1,mid+1,en,idx,val);
 
-        tree[node]=max(tree[2*node],tree[2*node+1]);
+    if(beg>en || r<beg || en<l)
+        return;
+
+    if(l<=beg && en<=r)
+    {
+        tree[node]+=(en-beg+1)*val;
+        if(beg!=en)
+        {
+            lazy[2*node]+=val;
+            lazy[2*node+1]+=val;
+        }
+
+        return;
     }
+
+    int mid=(beg+en)/2;
+    updateRange(2*node,beg,mid,l,r,val);
+    updateRange(2*node+1,mid+1,en,l,r,val);
+
+    tree[node]=tree[2*node]+tree[2*node+1];
 }
 
-int query(int node,int start,int en,int l,int r)
+int queryRange(int node,int beg,int en,int l,int r)
 {
-    if(r<start or en<l)
+    if(beg>en || r<beg || en<l)
         return 0;
 
-    if(l<=start and en<=r)
+    if(lazy[node]!=0)
+    {
+        tree[node]+=(en-beg+1)*lazy[node];
+        if(beg!=en)
+        {
+            lazy[2*node]+=lazy[node];
+            lazy[2*node+1]+=lazy[node];
+        }
+        lazy[node]=0;
+    }
+
+    if(l<=beg && en<=r)
         return tree[node];
 
-    int mid=(start+en)/2;
-    int p1=query(2*node,start,mid,l,r);
-    int p2=query(2*node+1,mid+1,en,l,r);
+    int mid=(beg+en)/2;
+    int q1=queryRange(2*node,beg,mid,l,r);
+    int q2=queryRange(2*node+1,mid+1,en,l,r);
 
-    return max(p1,p2);
+    return (q1+q2);
 }
 
-//utility function
+// utility functions
+// "b" is assumed to be ancestor of "a"
 
 int query_up(int a,int b)
 {
@@ -136,55 +127,66 @@ int query_up(int a,int b)
     {
         if(id[a]==id[b])
         {
-            if(a==b)
-                break;
-
-            res=max(res,query(1,0,n-1,pos[b]+1,pos[a]));
-
+            res+=queryRange(1,0,n-1,pos[b],pos[a]);
             break;
         }
 
-        res=max(res,query(1,0,n-1,pos[head[id[a]]],pos[a]));
+        res+=queryRange(1,0,n-1,pos[head[id[a]]],pos[a]);
         a=par[head[id[a]]];
     }
 
     return res;
 }
 
-//hld (decomposition function)
+void update_up(int a,int b,int val)
+{
+    while(1)
+    {
+        if(id[a]==id[b])
+        {
+            updateRange(1,0,n-1,pos[b],pos[a],val);
+            break;
+        }
 
-void hld(int x,int p,int w)
+        updateRange(1,0,n-1,pos[head[id[a]]],pos[a],val);
+        a=par[head[id[a]]];
+    }
+}
+
+// hld (decomposition function)
+
+void hld(int x,int p)
 {
     if(head[chain]==-1)
         head[chain]=x;
 
     id[x]=chain;
     pos[x]=tim;
-    base[tim++]=w;
+    base[tim++]=0;                  // assign value to base[] here
 
     int mx=-1;
-    pii big={-1,-1};
+    int big=-1;
     for(auto c:v[x])
     {
-        if(c.F==p)
+        if(c==p)
             continue;
 
-        if(mx<sz[c.F])
+        if(mx<sub[c])
         {
-            mx=sz[c.F];
+            mx=sub[c];
             big=c;
         }
     }
 
-    if(big.F!=-1)
-        hld(big.F,x,big.S);
+    if(big!=-1)
+        hld(big,x);
 
     for(auto c:v[x])
     {
-        if(c.F==p || c==big)
+        if(c==p || c==big)
             continue;
 
         ++chain;
-        hld(c.F,x,c.S);
+        hld(c,x);
     }
 }

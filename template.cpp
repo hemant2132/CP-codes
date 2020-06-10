@@ -9,10 +9,12 @@ using namespace std;
 
 #define     int             long long int
 #define     fast()          ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);
-#define     all(x)          (x).begin(),(x).end()
+#define     all(x)          begin(x),end(x)
 #define     rz(x)           resize(x)
+#define     asn(x,y)        assign(x,y)
 #define     mem(a,b)        memset(a,b,sizeof(a))
-#define     sz(x)           ((int)(x.size()))
+#define     sz(x)           ((int)size(x))
+#define     eb              emplace_back
 #define     pb              push_back
 #define     pf              push_front
 #define     pob             pop_back
@@ -23,14 +25,10 @@ using namespace std;
 #define     mii             map<int,int>
 #define     F               first
 #define     S               second
-#define     makep           make_pair
-#define     maket           make_tuple
 #define     remax(a,b)      a=max(a,b)
 #define     remin(a,b)      a=min(a,b)
 #define     bitcount(x)     __builtin_popcountll(x)
-#define     iceil(n,x)      (((n)+(x)-1)/(x))
-#define     gcd(a,b)        (__gcd((a),(b)))
-#define     lcm(a,b)        (((a)*(b))/gcd((a),(b)))
+#define     iceil(n,x)      (((n)-1)/(x)+1)
 #define     dbug(x)         cout<<#x<<": "<<(x)<<"\n"
 #define     flush           fflush(stdout)
 #define     show(x)         for(auto zz:x)cout<<zz<<" ";cout<<"\n";

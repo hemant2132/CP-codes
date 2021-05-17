@@ -1,0 +1,6 @@
+_
+Z_testing
+*.o
+*.exe
+
+.vscode

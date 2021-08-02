@@ -1,45 +1,60 @@
-/*  Logic used: Every composite no. can be uniquely represented as
-    q = i * p; where p is the smallest prime factor and i >= p.
-    We just need to ensure that every composite no. gets marked exactly once
-    and we do that when we reach i by considering all primes p <= i
-    and marking the corresponding nos. (i * p) as composites.
-*/
-
 /*
-    -> can be used to calculate primes upto N=1e8
-       in linear time (segmented sieve has better performance)
-    -> additionally, it can be easily modified to calculate spf[]
-       (takes 1s for N=3e7)
-    -> this approach/implementation can be extended to compute multiplicative functions
-       in linear time quite comfortably (https://codeforces.com/blog/entry/54090)
+    -> Linear Seve
+
+    -> Logic used: 
+        - Every composite no. can be uniquely represented as q = i * p; where p is the smallest prime factor and i >= p.
+        - We just need to ensure that every composite no. gets marked exactly once. 
+        - We do that by reaching i by considering all primes p_j <= i and marking the corresponding nos. (i * p_j) (such that p_j <= smallest_prime_factor(i)) as composites.
+
+    -> can be used to calculate primes upto N = 1e8 in linear time (segmented sieve has better performance)
+    -> additionally, it can be easily modified to calculate spf[] (takes 1s for N = 3e7)
+    -> this approach/implementation can be extended to compute multiplicative functions in linear time quite comfortably (https://codeforces.com/blog/entry/54090)
+    
+    -> ref: https://cp-algorithms.com/algebra/prime-sieve-linear.html
 */
 
-//bool comp[N];
-vector<int> pr,spf(N);
+// for just finding primes
+
+bool isComposite[N];
+vector<int> primes;
 
 void sieve_linear()
 {
-    //memset(comp,0,sizeof(comp));
-    fill(spf.begin(),spf.end(),0);
-    pr.clear();
+    memset(isComposite, 0, sizeof(isComposite));
+    primes.clear();
 
-    int siz=0;
-    for(int i=2;i<N;i++)
+    for (int i = 2; i < N; ++i)
     {
-        if(spf[i]==0)
+        if (!isComposite[i])
+            primes.push_back(i);
+
+        for (int j = 0, siz = primes.size(); j < siz && i * primes[j] < N; ++j)
         {
-            pr.push_back(i);
-            spf[i]=i;
-            ++siz;
+            isComposite[primes[j] * i] = true;
+            if(i % primes[j] == 0)
+               break;
+        }
+    }
+}
+
+// for smallest prime factor
+
+vector<int> primes, spf(N);
+
+void sieve_linear()
+{
+    fill(spf.begin(), spf.end(), 0);
+    primes.clear();
+
+    for (int i = 2; i < N; ++i)
+    {
+        if (spf[i] == 0)
+        {
+            primes.push_back(i);
+            spf[i] = i;
         }
 
-        for(int j=0;j<siz && pr[j]<spf[i] && i*pr[j]<N;++j)
-        {
-            spf[i*pr[j]]=spf[i];
-
-            //comp[pr[j]*i]=1;
-            //if(i%pr[j]==0)
-            //    break;
-        }
+        for (int j = 0, siz = primes.size(); j < siz && primes[j] <= spf[i] && i * primes[j] < N; ++j)
+            spf[i * primes[j]] = primes[j];
     }
 }

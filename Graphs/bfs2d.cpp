@@ -1,44 +1,31 @@
-int dx[]={1,-1,0,0};
-int dy[]={0,0,1,-1};
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
 
-bool valid(int x,int y)
-{
-    return (x>=0 && x<n && y>=0 && y<m && s[x][y]!='#' && dist[x][y]==inf);
+bool valid(int x, int y) {
+    return x >= 0 && x < n && y >= 0 && y < m && mat[x][y] != '#' && dist[x][y] == inf;
 }
 
-int bfs2d(int sx,int sy)
-{
-    for(int i=0;i<n;++i)
-    {
-        for(int j=0;j<m;++j)
-            dist[i][j]=inf;
-    }
+void bfs2d(int start_x, int start_y) {
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < m; ++j)
+            dist[i][j] = inf;
 
-    dist[sx][sy]=0;
-    q.push({sx,sy});
+    queue<pair<int, int>> qu;
+    qu.push({start_x, start_y});
+    dist[start_x][start_y] = 0;
 
-    int res=0,x,y;
-    pii p;
+    while (!qu.empty()) {
+        auto [x, y] = qu.front();
+        qu.pop();
 
-    while(!q.empty())
-    {
-        p=q.front();
-        q.pop();
+        for (int i = 0; i < 4; ++i) {
+            int a = x + dx[i];
+            int b = y + dy[i];
 
-        res=max(res,dist[p.F][p.S]);
-
-        for(int i=0;i<4;++i)
-        {
-            x=p.F+dx[i];
-            y=p.S+dy[i];
-
-            if(valid(x,y))
-            {
-                dist[x][y]=dist[p.F][p.S]+1;
-                q.push({x,y});
+            if (valid(a, b)) {
+                dist[a][b] = dist[x][y] + 1;
+                qu.push(pair(a, b));
             }
         }
     }
-
-    return res;
 }

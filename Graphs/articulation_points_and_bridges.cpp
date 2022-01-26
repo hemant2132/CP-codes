@@ -1,38 +1,49 @@
-vector<int> v[N],disc(N),low(N);
-vector<bool> vis(N,0);
+/*
+    -> Articulation Points and Bridges
 
-vector<int> ap;                     //articulation points
-vector<pair<int,int>> be;           //bridges
+    -> articulation point: a vertex which when removed along with all the edges associated with it, makes the graph disconnected
+    -> bridge: an edge which when removed makes the graph disconnected
 
-int tim=1;
+    -> current implementation is only for undirected graphs
 
-void dfs(int x,int p)
-{
-    vis[x]=1;
-    disc[x]=low[x]=tim++;
-    int child=0;
+    -> ref: 
+        1. https://codeforces.com/blog/entry/68138
+        2. https://www.hackerearth.com/practice/algorithms/graphs/articulation-points-and-bridges/tutorial/
+*/
 
-    for(auto c:v[x])
-    {
-        if(c==p)
+vector<int> adj[N];
+vector<int> disc(N);    // disc[i] = time at which node 'i' was discovered 
+vector<int> low(N);    // low[i] = min. amount of disc[j] for all nodes 'j' connected to node 'i'
+bool vis[N];
+
+vector<int> articulation_points;
+vector<pair<int, int>> bridges;
+
+int tim = 1;
+
+void dfs(int x, int par) {
+    vis[x] = true;
+    disc[x] = low[x] = tim++;
+    int child = 0;
+
+    for (auto c : adj[x]) {
+        if (c == par)
             continue;
 
-        if(!vis[c])
-        {
+        if (!vis[c]) { // forward edge
             ++child;
 
-            dfs(c,x);
+            dfs(c, x);
 
-            low[x]=min(low[x],low[c]);
+            low[x] = min(low[x], low[c]);
 
-            if((p==-1 && child>1) || (p!=-1 && low[c]>=disc[x]))
-                ap.pb(x);
+            if ((par == -1 && child > 1) || (par != -1 && low[c] >= disc[x]))
+                articulation_points.pb(x);
 
-            if(low[c]>disc[x])
-                be.pb({min(c,x),max(c,x)});
+            if (low[c] > disc[x])
+                bridges.pb({min(c, x), max(c, x)});
+        } else { // back edge
+            low[x] = min(low[x], disc[c]);
         }
-        else
-            low[x]=min(low[x],disc[c]);
     }
 }
-

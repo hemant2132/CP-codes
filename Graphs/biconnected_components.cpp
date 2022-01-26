@@ -1,53 +1,49 @@
-vector<int> v[N],disc(N),low(N),par(N,-1);
-vector<bool> vis(N,0);
-stack<pii> stk;
-set<int> st;
+/*
+    -> Biconnected Component
 
-int tim=1;
+    -> A biconnected component of a given graph is the maximal connected subgraph which does not contain any articulation vertices.
 
-void dfs(int x)
-{
-    vis[x]=1;
-    disc[x]=low[x]=tim++;
-    int child=0;
-    pii p;
+    -> The idea is to push nodes to a stack (as we visit them in the DFS tree) and when we reach back to an articulation point (or the root), we pop all the nodes visited after it to get a biconnected component.
 
-    for(auto u:v[x])
-    {
-        if(!vis[u])
-        {
-            ++child;
-            par[u]=x;
-            p={min(x,u),max(x,u)};
-            stk.push(p);
+    -> ref: https://www.hackerearth.com/practice/algorithms/graphs/biconnected-components/tutorial/  
+*/
 
-            dfs(u);
+vector<int> adj[N];
+vector<int> disc(N), low(N);
+bool vis[N];
 
-            low[x]=min(low[x],low[u]);
+stack<int> stk;
 
-            if((par[x]==-1 && child>1)  || (par[x]!=-1 && low[u]>=disc[x]))
-            {
-                while(stk.top()!=p)
-                {
-                    st.ins(stk.top().F);
-                    st.ins(stk.top().S);
+int tim = 1;
+
+void dfs(int x, int par) {
+    vis[x] = true;
+    disc[x] = low[x] = tim++;
+
+    stk.push(x);
+
+    for (auto c : adj[x]) {
+        if (c == par)
+            continue;
+
+        if (!vis[c]) {
+            dfs(c, x);
+
+            low[x] = min(low[x], low[c]);
+
+            if (low[c] >= disc[x]) {
+                vector<int> component;
+                component.pb(x);
+
+                while (stk.top() != x) {
+                    component.pb(stk.top());
                     stk.pop();
                 }
 
-                st.ins(stk.top().F);
-                st.ins(stk.top().S);
-                stk.pop();
-
-                // st -> vertices of the biconnected component
-
-                st.clear();
+                // component[] -> vertices of the biconnected component
             }
-        }
-        else if(par[x]!=u && disc[u]<low[x])
-        {
-            low[x]=disc[u];
-            p={min(x,u),max(x,u)};
-            stk.push(p);
+        } else if (disc[c] < low[x]) {
+            low[x] = disc[c];
         }
     }
 }

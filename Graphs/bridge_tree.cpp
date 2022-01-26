@@ -1,99 +1,76 @@
-vector<int> v[N],disc(N),low(N),vis(N);
-vector<int> adj[N],comp(N);                 // adj -> bridge tree
+/*
+    -> Bridge Tree
 
-stack<pii> stk;
+    -> Bridges in a graph divide the graph into different components such that when we traverse a bridge, we move from one such component to another. Let’s call these components as bridge components. 
+    -> A "bridge tree" is a tree obtained by shrinking each of the bridge components of the graph into a single node such that an edge between two nodes in the resulting tree correspond to the bridge edge in the original graph connecting two different bridge components represented by the two nodes of the tree.
 
-int n,m;
-int tim=1,ind=1;
-pii pr;
+    -> ref: https://tanujkhattar.wordpress.com/2016/01/10/the-bridge-tree-of-a-graph/
+*/
 
-void dfs(int x,int p)
-{
-    vis[x]=1;
-    disc[x]=low[x]=tim++;
+vector<int> adj[N], disc(N), low(N);
+bool vis[N];
 
-    stk.push({x,x});
+vector<int> bridge_tree[N];     // adjacency list for bridge tree
+vector<int> comp(N);            // comp[i] -> component no. for node 'i'
 
-    for(auto c:v[x])
-    {
-        if(c==p)
+stack<int> stk;
+
+int tim = 1, comp_cnt = 1;
+
+void dfs(int x, int par) {
+    vis[x] = true;
+    disc[x] = low[x] = tim++;
+    
+    for (auto c : adj[x]) {
+        if (c == par)
             continue;
 
-        if(!vis[c])
-        {
-            stk.push({x,c});
+        if (!vis[c]) {
+            stk.push(x);
+            stk.push(c);
 
-            dfs(c,x);
+            dfs(c, x);
 
-            low[x]=min(low[x],low[c]);
+            low[x] = min(low[x], low[c]);
 
-            if(low[c]>disc[x])
-            {
-                while(stk.top().F!=x)
-                {
-                    pr=stk.top();
-                    comp[pr.F]=comp[pr.S]=ind;
+            if (low[c] > disc[x]) { // edge (x, c) is a bridge
+                while (true) {
+                    comp[stk.top()] = comp_cnt;
                     stk.pop();
+
+                    if (stk.top() == x)
+                        break;
                 }
-
-                stk.pop();
-
-                ++ind;
+                
+                ++comp_cnt;
             }
+        } else if (disc[c] < low[x]) {
+            low[x] = disc[c];
         }
-        else
-        {
-            if(disc[x]>disc[c])
-            {
-                stk.push({c,x});
-                low[x]=min(low[x],disc[c]);
-            }
+    }
+
+    if (par == -1) {
+        while (!stk.empty()) {
+            comp[stk.top()] = compCnt;
+            stk.pop();
         }
     }
 }
 
-void solve()
-{
-    cin>>n>>m;
+void constructBridgeTree(int n) {
+    dfs(1, -1);
 
-    int a,b;
-    for(int i=0;i<m;++i)
-    {
-        cin>>a>>b;
-        v[a].pb(b);
-        v[b].pb(a);
-    }
-
-    dfs(1,-1);
-
-    while(!stk.empty())
-    {
-        pr=stk.top();
-        comp[pr.F]=comp[pr.S]=ind;
-        stk.pop();
-    }
-
-//    for(int i=1;i<=n;++i)
-//        cout<<comp[i]<<" ";
-//    cout<<"\n";
-
-    for(int i=1;i<=n;++i)
-    {
-        for(auto c:v[i])
-        {
-            if(comp[i]!=comp[c])
-                adj[comp[i]].pb(comp[c]);
+    repa(i, 1, n) {
+        for (auto c : adj[i]) {
+            if (comp[i] != comp[c])
+                bridge_tree[comp[i]].pb(comp[c]);
         }
     }
 
-//    for(int i=1;i<=n;++i)
-//    {
-//        cout<<i<<": ";
-//        for(auto c:adj[i])
-//            cout<<c<<" ";
-//        cout<<"\n";
-//    }
+    // repa(i, 1, n)
+    //     cout << comp[i] << " ";
+    // cout << "\n";
+
+    // repa(i, 1, n)
+    //     show(i, bridge_tree[i]);
 }
-
-
-

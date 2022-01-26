@@ -1,42 +1,36 @@
-struct node
-{
-    node* ch[28];
-    int cnt;
-    node()
-    {
-        for(int i=0;i<28;++i)
-            ch[i]=NULL;
+/*
+    -> Trie (for strings)
+    -> ref: https://www.hackerearth.com/practice/data-structures/advanced-data-structures/trie-keyword-tree/tutorial/
+*/
 
-        cnt=0;
+struct TrieNode {
+    TrieNode *ch[28];
+    int cnt;
+    TrieNode() {
+        for (int i = 0; i < 28; ++i) ch[i] = nullptr;
+        cnt = 0;
     }
 };
 
-node* root=NULL;
+TrieNode *root = nullptr;
 
-void insrt(string s)
-{
-    node* cur=root;
-    int len=s.length();
-    int x;
-    for(int i=0;i<len;++i)
-    {
-        x=s[i]-'A';
-
-        if(!cur->ch[x])
-            cur->ch[x]=new node();
-        cur=cur->ch[x];
+void insertString(string s) {
+    TrieNode *cur = root;
+    int len = sz(s);
+    int c;
+    for (int i = 0; i < len; ++i) {
+        c = s[i] - 'A';
+        if (!cur->ch[c]) cur->ch[c] = new TrieNode();
+        cur = cur->ch[c];
         cur->cnt++;
     }
 }
 
-void rem(node* cur)
-{
-    for(int i=0;i<28;++i)
-    {
-        if(cur->ch[i]!=NULL)
-        {
-            cur->ch[i]->cnt=0;
-            rem(cur->ch[i]);
+void resetNodes(TrieNode *cur) {
+    for (int i = 0; i < 28; ++i) {
+        if (cur->ch[i] != nullptr) {
+            cur->ch[i]->cnt = 0;
+            resetNodes(cur->ch[i]);
         }
     }
 }

@@ -1,30 +1,33 @@
-int bit[N];
+/*
+    -> Fenwick Tree
 
-void update(int idx, int val)
-{
-	while(idx<=n)
-	{
-		bit[idx]+=val;
-		idx+=idx&-idx;
-	}
+    -> range queries and point update in O(logN)
+    -> works for reversible functions
+    -> current implementation follows 1-based indexing
+    -> fenwick[i] = sumOfRange(i - LSB(i) + 1, i)
+    -> (x & -x) gives LSB of x
+*/
+
+int fenwick[N];
+
+void update(int ind, int val) {
+    while (ind <= n) {
+        fenwick[ind] += val;
+        ind += ind & -ind;
+    }
 }
 
-int pref(int idx)
-{
-	int ans=0;
-	while(idx>0)
-	{
-		ans+=bit[idx];
-		idx-=idx&-idx;
-	}
+int pref(int ind) {
+    int res = 0;
+    while (ind > 0) {
+        res += fenwick[ind];
+        ind -= ind & -ind;
+    }
 
-	return ans;
+    return res;
 }
 
-int query(int l, int r)
-{
-    if(l>r)
-        return 0;
-
-	return pref(r) - pref(l-1);
+int query(int l, int r) {
+  if (l > r) return 0;
+  return pref(r) - pref(l - 1);
 }

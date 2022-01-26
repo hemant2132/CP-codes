@@ -1,35 +1,45 @@
-vector<int> arr(N),siz(N);
+/*
+    -> Disjoint Set Union
 
-void init(int n)
-{
-    for(i=1;i<=n;++i)
-        arr[i]=i,siz[i]=1;
+    ->  operations (both achieved in nearly constant time):
+        1. merge two sets
+        2. find set of an element
+
+    -> ref:
+        1. https://www.hackerearth.com/practice/data-structures/disjoint-data-strutures/basics-of-disjoint-data-structures/tutorial/
+        2. https://cp-algorithms.com/data_structures/disjoint_set_union.html
+*/
+
+vector<int> parent(N), siz(N);
+
+void init(int n) {
+    for (int i = 1; i <= n; ++i) {
+        parent[i] = i;
+        siz[i] = 1;
+    }
 }
 
-int root(int x)
-{
-    while(arr[x]!=x)
-    {
-        arr[x]=arr[arr[x]];
-        x=arr[x];
+// path compression
+int root(int x) {
+    while (parent[x] != x) {
+        parent[x] = parent[parent[x]];
+        x = parent[x];
     }
 
     return x;
 }
 
-bool uni(int a,int b)
-{
-    int x=root(a);
-    int y=root(b);
+// weighted union
+bool uni(int a, int b) {
+    int x = root(a);
+    int y = root(b);
 
-    if(x==y)
-        return 0;
+    if (x == y) return false;
 
-    if(siz[x]<siz[y])
-        swap(x,y);
+    if (siz[x] < siz[y]) swap(x, y);
 
-    arr[y]=x;
-    siz[x]+=siz[y];
+    parent[y] = x;
+    siz[x] += siz[y];
 
-    return 1;
+    return true;
 }

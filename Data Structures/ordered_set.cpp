@@ -1,3 +1,8 @@
+/*
+    -> Ordered Set
+    -> ref: https://codeforces.com/blog/entry/11080
+*/
+
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
@@ -5,7 +10,9 @@ using namespace __gnu_pbds;
 #define T int
 #define ordered_set tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>
 
-//less_equal<T> for multiset
-//order_of_key()  (value)
-//find_by_order() (0-based indexing)
-//insert()
+ordered_set os;
+
+// order_of_key(val) -> returns the no. of elements strictly less than 'val' 
+// *find_by_order(index) -> returns the value at 'index' (0-based indexing)
+// use pair<T, int> for multiset
+// you can use a custom comparator instead of less<T>

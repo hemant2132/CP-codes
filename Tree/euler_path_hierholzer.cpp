@@ -1,33 +1,29 @@
+// todo, https://jlmartin.ku.edu/~jlmartin/courses/math105-F11/Lectures/chapter5-part2.pdf
 // euler path - a path that uses every edge of the graph exactly once
 
-void euler(int start)
-{
+void eulerPath(int start) {
     stack<int> stk;
 
     stk.push(start);
 
     int x;
-    bool fl;
-    while(!stk.empty())
-    {
-        x=stk.top();
+    bool flag;
+    while (!stk.empty()) {
+        x = stk.top();
 
-        fl=0;
-        for(int i=0;i<N;++i)
-        {
-            if(mat[x][i])
-            {
-                fl=1;
+        flag = false;
+        for (int i = 0; i < N; ++i) {
+            if (adj_matrix[x][i]) {
+                flag = true;
                 stk.push(i);
-                mat[x][i]=0;
+                adj_matrix[x][i] = 0;
                 break;
             }
         }
 
-        if(!fl)
-        {
-            // add this node to rhe path
-            // euler_path.pb(x);
+        if (!flag) {
+            // add this node to the path
+            // eulerPath.pb(x);
 
             stk.pop();
         }

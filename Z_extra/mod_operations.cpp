@@ -1,5 +1,5 @@
 // mod operations
-void mod(int &x,int p=M){ x%=p; x+=p; x%=p; }
-int add(int a,int b,int p=M){ mod(a);mod(b); int c=a+b; if(c>=p) c-=p; return c; }
-int sub(int a,int b,int p=M){ mod(a);mod(b); int c=a-b; if(c<0) c+=p; return c; }
-int mul(int a,int b,int p=M){ mod(a);mod(b); int c=(a*1ll*b)%p; return c; }
+void mod(int &x, int p = MOD) { x %= p; x += p; x %= p; }
+inline int add(int a, int b, int p = MOD) { a = a + b; if (a >= p) a -= p; return a; }
+inline int sub(int a, int b, int p = MOD) { a = a - b; if (a < 0) a += p; return a; }
+inline int mul(int a, int b, int p = MOD) { a = (a * 1ll * b) % p; return a; }

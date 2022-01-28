@@ -1,36 +1,30 @@
-//Returns the no. of inversions in the range [l, r) in arr
+// Returns the no. of inversions in the range [l, r] in 'arr'
 
-int merge_sort(vector<int> arr,int l=0,int r=n)
-{
-    if(l>r)
-        return 0;
+vector<int> temp_arr;
 
-    int mid=(l+r)/2;
-    int res=0;
+int countInversions(vector<int>& arr, int l, int r) {
+    if (l >= r) return 0;
 
-    res+=merge_sort(arr,l,mid);
-    res+=merge_sort(arr,mid,r);
+    int mid = (l + r) / 2;
+    int res = 0;
+    res += countInversions(arr, l, mid);
+    res += countInversions(arr, mid + 1, r);
 
-    vector<int> sorted;
+    int i = l, j = mid + 1;
+    int k = l;
+    while (i <= mid) {
+        while (j <= r && arr[j] < arr[i])
+            temp_arr[k++] = arr[j++];
 
-    int i=l,j=mid;
-
-    while(i<mid)
-    {
-        while(j<r && arr[j]<arr[i])
-        {
-            sorted.push_back(arr[j++]);
-        }
-
-        res+=j-mid;
-        sorted.push_back(arr[i++]);
+        res += j - (mid + 1);
+        temp_arr[k++] = arr[i++];
     }
 
-    while(j<r)
-        sorted.push_back(arr[j++]);
+    while (j <= r)
+        temp_arr[k++] = arr[j++];
 
-    for(int i=l;i<r;++i)
-        arr[i]=sorted[i-l];
+    for (int i = l; i <= r; ++i)
+        arr[i] = temp_arr[i];
 
     return res;
 }

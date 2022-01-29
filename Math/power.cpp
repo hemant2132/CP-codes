@@ -1,14 +1,17 @@
-int pw(int x,int n)
-{
-    int res=1;
+/*
+    -> Binary Exponentiation
+    -> ref: https://cp-algorithms.com/algebra/binary-exp.html
+*/
 
-    x%=M;
-    for(;n;n/=2)
-    {
-        if(n%2)
-            res=(res*x)%M;
+int pw(int base, int exp, int mod = MOD) {
+    int res = 1;
 
-        x=(x*x)%M;
+    base %= mod;
+    for (; exp; exp /= 2) {
+        if (exp % 2)
+            res = mul(res, base, mod);
+            
+        base = mul(base, base, mod);
     }
 
     return res;

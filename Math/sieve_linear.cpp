@@ -15,22 +15,19 @@
 
 // for just finding primes
 
-bool isComposite[N];
+bool is_composite[N];
 vector<int> primes;
 
-void sieve_linear()
-{
-    memset(isComposite, 0, sizeof(isComposite));
+void sieve_linear() {
+    memset(is_composite, 0, sizeof(is_composite));
     primes.clear();
 
-    for (int i = 2; i < N; ++i)
-    {
-        if (!isComposite[i])
+    for (int i = 2; i < N; ++i) {
+        if (!is_composite[i])
             primes.push_back(i);
 
-        for (int j = 0, siz = primes.size(); j < siz && i * primes[j] < N; ++j)
-        {
-            isComposite[primes[j] * i] = true;
+        for (int j = 0, siz = (int)primes.size(); j < siz && i * primes[j] < N; ++j) {
+            is_composite[primes[j] * i] = true;
             if(i % primes[j] == 0)
                break;
         }
@@ -41,20 +38,17 @@ void sieve_linear()
 
 vector<int> primes, spf(N);
 
-void sieve_linear()
-{
+void sieve_linear() {
     fill(spf.begin(), spf.end(), 0);
     primes.clear();
 
-    for (int i = 2; i < N; ++i)
-    {
-        if (spf[i] == 0)
-        {
+    for (int i = 2; i < N; ++i) {
+        if (spf[i] == 0) {
             primes.push_back(i);
             spf[i] = i;
         }
 
-        for (int j = 0, siz = primes.size(); j < siz && primes[j] <= spf[i] && i * primes[j] < N; ++j)
+        for (int j = 0, siz = (int)primes.size(); j < siz && primes[j] <= spf[i] && i * primes[j] < N; ++j)
             spf[i * primes[j]] = primes[j];
     }
 }

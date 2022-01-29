@@ -12,37 +12,31 @@
   -> sum(i, 1..n) sum(j, 1..n) gcd(i,j) = sum(k, 1..n) phi(k) * (floor(n/k))^2
 */
 
-vector<int> pr;
-bool comp[N];
+vector<int> primes;
+bool is_composite[N];
 int mu[N];
 
-void mobius_linear()
-{
-	mem(comp,0);
-	pr.clear();
+void mobius_linear() {
+    memset(is_composite, 0, sizeof(is_composite));
+    primes.clear();
 
-	mu[1]=1;
+    mu[1] = 1;
 
-	for(int i=2;i<N;++i)
-    {
-		if(!comp[i])
-		{
-			pr.pb(i);
-			mu[i]=-1;
-		}
+    for (int i = 2; i < N; ++i) {
+        if (!is_composite[i]) {
+            primes.push_back(i);
+            mu[i] = -1;
+        }
 
-		for(int j=0,siz=sz(pr);j<siz && i*pr[j]<N;++j)
-        {
-			comp[i*pr[j]]=1;
-			if(i%pr[j]==0)
-			{
-				mu[i*pr[j]]=0;
-				break;
-			}
-            else
-            {
-				mu[i*pr[j]]=mu[i]*mu[pr[j]];
-			}
-		}
-	}
+        for (int j = 0, siz = (int)primes.size(); j < siz && i * primes[j] < N; ++j) {
+            is_composite[i * primes[j]] = true;
+            if (i % primes[j] == 0) {
+                mu[i * primes[j]] = 0;
+                break;
+            }
+            else {
+                mu[i * primes[j]] = mu[i] * mu[primes[j]];
+            }
+        }
+    }
 }

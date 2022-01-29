@@ -1,33 +1,35 @@
-int pw(int x,int n)
-{
-    int res=1;
+/*
+    -> calculating nCr without computing factorials beforehand
+    -> current implementation for N <= 100
+*/
 
-    //x%=M;
-    for(;n;n/=2)
-    {
-        if(n%2)
-            res=(res*x);//%M;
+int pw(int base, int exp) {
+    int res = 1;
 
-        x=(x*x);//%M;
+    //base %= M;
+    for (; exp; exp /= 2) {
+        if (exp % 2)
+            res = (res * base); // % M;
+
+        base = (base * base); // % M;
     }
 
     return res;
 }
 
-vector<int> primes={2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97};
+// primes[] can be changed according to requirements
+vector<int> primes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97};
 
-vector<int> get(int n)
-{
+// res[i] -> power of primes[i] in n!
+vector<int> factPowers(int n) {
     vector<int> res;
-    for(auto& c:primes)
-    {
-        int tmp=n;
-        int cnt=0;
+    for (auto &c : primes) {
+        int tmp = n;
+        int cnt = 0;
 
-        while(tmp)
-        {
-            tmp/=c;
-            cnt+=tmp;
+        while (tmp) {
+            tmp /= c;
+            cnt += tmp;
         }
 
         res.pb(cnt);
@@ -36,16 +38,13 @@ vector<int> get(int n)
     return res;
 }
 
+int nCr(int n, int r) {
+    vector<int> tot = factPowers(n);
+    vector<int> a = factPowers(r), b = factPowers(n - r);
 
-int ncr(int n,int r)
-{
-    vector<int> tot=get(n);
-    vector<int> a=get(r),b=get(n-r);
-
-    int sz=tot.size(),ans=1;
-    for(int i=0;i<sz;++i)
-    {
-        ans*=pw(primes[i],(tot[i]-(a[i]+b[i])));
+    int sz = (int)tot.size(), ans = 1;
+    for (int i = 0; i < sz; ++i) {
+        ans *= pw(primes[i], (tot[i] - (a[i] + b[i])));
     }
 
     return ans;

@@ -6,62 +6,54 @@
     -> tested on SPOJ/FACT0 (15 digits)
 */
 
-int pollard_rho(int n, int c)
-{
-    int x=2,y=2,i=1,k=2,d;
-    while(1)
-    {
-        x=(mulmod(x,x,n)+c);
-        if(x>=n)
-            x-=n;
+int pollardRho(int n, int c) {
+    int x = 2, y = 2, i = 1, k = 2, d;
+    while (1) {
+        x = (mulmod(x, x, n) + c);
+        if (x >= n)
+            x -= n;
 
-        d=__gcd(x-y,n);
-        if(d>1)
+        d = __gcd(x - y, n);
+        if (d > 1)
             return d;
 
-        if(++i==k)
-            y=x,k<<=1;
+        if (++i == k)
+            y = x, k <<= 1;
     }
 
     return n;
 }
 
-void trial_division(int n,vi &factors)
-{
-    for(int i=2;i*i<=n;++i)
-    {
-        while(n%i==0)
-        {
+void trialDivision(int n, vi &factors) {
+    for (int i = 2; i * i <= n; ++i) {
+        while (n % i == 0) {
             factors.pb(i);
-            n/=i;
+            n /= i;
         }
     }
 
-    if(n>1)
+    if (n > 1)
         factors.pb(n);
 }
 
-void factorize(int n,vi &factors)
-{
-    if(n==1)
+void factorize(int n, vi &factors) {
+    if (n == 1)
         return;
 
-    if(n<inf)
-    {
-        trial_division(n,factors);
+    if (n < inf) {
+        trialDivision(n, factors);
         return;
     }
 
-    if(MillerRabin(n))
-    {
+    if (millerRabin(n)) {
         factors.pb(n);
         return;
     }
 
-    int d=n;
-    for(int i=2;d==n;++i)
-        d=pollard_rho(n, i);
+    int d = n;
+    for (int i = 2; d == n; ++i)
+        d = pollardRho(n, i);
 
-    factorize(d,factors);
-    factorize(n/d,factors);
+    factorize(d, factors);
+    factorize(n / d, factors);
 }

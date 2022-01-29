@@ -1,38 +1,34 @@
 /*
-    other multiplicative functions can also be implemented in this way
+    -> Totient function (linear sieve)
+    -> other multiplicative functions can also be implemented in this way
+    -> ref: https://codeforces.com/blog/entry/54090
 */
 
-vector<int> pr;
-bool comp[N];
+vector<int> primes;
+bool is_composite[N];
 int phi[N];
 
-void totient_linear()
-{
-	mem(comp,0);
-	pr.clear();
+void totient_linear() {
+    memset(is_composite, 0, sizeof(is_composite));
+    primes.clear();
 
-	phi[1]=1;
+    phi[1] = 1;
 
-	for(int i=2;i<N;++i)
-    {
-		if(!comp[i])
-		{
-			pr.pb(i);
-			phi[i]=i-1;
-		}
+    for (int i = 2; i < N; ++i) {
+        if (!is_composite[i]) {
+            primes.pb(i);
+            phi[i] = i - 1;
+        }
 
-		for(int j=0,siz=sz(pr);j<siz && i*pr[j]<N;++j)
-        {
-			comp[i*pr[j]]=1;
-			if(i%pr[j]==0)
-			{
-				phi[i*pr[j]]=phi[i]*pr[j];
-				break;
-			}
-            else
-            {
-				phi[i*pr[j]]=phi[i]*phi[pr[j]];
-			}
-		}
-	}
+        for (int j = 0, siz = (int)primes.size; j < siz && i * primes[j] < N; ++j) {
+            is_composite[i * primes[j]] = true;
+            if (i % primes[j] == 0) {
+                phi[i * primes[j]] = phi[i] * primes[j];
+                break;
+            }
+            else {
+                phi[i * primes[j]] = phi[i] * phi[primes[j]];
+            }
+        }
+    }
 }

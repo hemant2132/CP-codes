@@ -1,39 +1,40 @@
-vector<int> fact(N),invfact(N);
+/*
+    -> Binomial Coefficients
+    -> Further reading: https://cp-algorithms.com/combinatorics/binomial-coefficients.html
+*/
 
-int pw(int x,int n)
-{
-    int res=1;
+vector<int> fact(N), invfact(N);
 
-    x%=M;
-    for(;n;n/=2)
-    {
-        if(n%2)
-            res=(res*x)%M;
+int pw(int base, int exp) {
+    int res = 1;
 
-        x=(x*x)%M;
+    base %= MOD;
+    for (; exp; exp /= 2) {
+        if (exp % 2)
+            res = mul(res, base);
+
+        base = mul(base, base);
     }
 
     return res;
 }
 
-void compute_fact()
-{
-	fact[0]=1;
-	for(int i=1;i<N;++i)
-        fact[i]=(fact[i-1]*i)%M;
+void computeFactorials() {
+    fact[0] = 1;
+    for (int i = 1; i < N; ++i)
+        fact[i] = mul(fact[i - 1], i);
 
-	invfact[N-1]=pw(fact[N-1],M-2);
-	for(int i=N-2;i>=0;--i)
-        invfact[i]=(invfact[i+1]*(i+1))%M;
+    invfact[N - 1] = pw(fact[N - 1], MOD - 2);
+    for (int i = N - 2; i >= 0; --i)
+        invfact[i] = mul(invfact[i + 1], (i + 1));
 }
 
-int nCr(int n,int r)
+int nCr(int n, int r)
 {
-	if(n<r)
-		return 0;
+    if (n < r) return 0;
 
-	int res=(fact[n]*invfact[r])%M;
-	res=(res*invfact[n-r])%M;
+    int res = mul(fact[n], invfact[r]);
+    res = mul(res, invfact[n - r]);
 
-	return res;
+    return res;
 }

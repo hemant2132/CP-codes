@@ -1,41 +1,42 @@
-vector<int> p;        // p -> primes
+/*
+    -> Totient function
+    -> phi(n) = sum (gcd(i, n) == 1) for 1 <= i <= n 
+    -> ref: https://cp-algorithms.com/algebra/phi-function.html
+*/
 
-int totient(int n)
-{
-    int res=n;
+vector<int> primes;
 
-    for(int i=0;p[i]*p[i]<=n;++i)
-    {
-        if(n%p[i]==0)
-        {
-            while(n%p[i]==0)
-                n/=p[i];
+// calculating phi(n) in O(sqrt(n))
+int totient(int n) {
+    int res = n;
 
-            res-=res/p[i];
+    for (int i = 0; primes[i] * primes[i] <= n; ++i) {
+        if (n % primes[i] == 0) {
+            while (n % primes[i] == 0)
+                n /= primes[i];
+
+            res -= res / primes[i];
         }
     }
 
-    if(n>1)
-        res-=res/n;
+    if (n > 1)
+        res -= res / n;
 
     return res;
 }
 
 vector<int> phi(N);
 
-void totient_all()
-{
-    for(int i=1;i<N;++i)
-        phi[i]=i;
+// calculating phi() for 1..N in O(NloglogN)
+void totientAll() {
+    for (int i = 1; i < N; ++i)
+        phi[i] = i;
 
-    for(int i=2;i<N;++i)
-    {
-        if(phi[i]==i)
-        {
-            for(int j=i;j<N;j+=i)
-            {
-                phi[j]/=i;
-                phi[j]*=(i-1);
+    for (int i = 2; i < N; ++i) {
+        if (phi[i] == i) {
+            for (int j = i; j < N; j += i) {
+                phi[j] /= i;
+                phi[j] *= (i - 1);
             }
         }
     }

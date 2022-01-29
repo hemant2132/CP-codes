@@ -5,76 +5,66 @@
 */
 
 // multiplying two large nos.
-int mulmod(int a,int b,int mod)
-{
-    int res=0;
+int mulmod(int a, int b, int mod) {
+    int res = 0;
 
-    a%=mod;
-    for(;b;b/=2)
-    {
-        if(b%2)
-            res=(res+a)%mod;
+    a %= mod;
+    for (; b; b /= 2) {
+        if (b % 2)
+            res = add(res, a, mod);
 
-        a=(a+a)%mod;
+        a = add(a, a, mod);
     }
 
     return res;
 }
 
-int pw(int x,int n,int mod)
-{
-    int res=1;
+int pw(int base, int exp, int mod) {
+    int res = 1;
 
-    x%=mod;
-    for(;n;n/=2)
-    {
-        if(n%2)
-            res=mulmod(res,x,mod);
+    base %= mod;
+    for (; exp; exp /= 2) {
+        if (exp % 2)
+            res = mulmod(res, base, mod);
 
-        x=mulmod(x,x,mod);
+        base = mulmod(base, base, mod);
     }
 
     return res;
 }
 
-bool check_composite(int n,int a,int d,int s)
-{
-    int x=pw(a,d,n);
-    if(x==1 || x==n-1)
-        return 0;
+bool check_composite(int n, int a, int d, int s) {
+    int x = pw(a, d, n);
+    if (x == 1 || x == n - 1)
+        return false;
 
-    for(int r=1;r<s;++r)
-    {
-        x=mulmod(x,x,n);
-        if(x==n-1)
-            return 0;
+    for (int r = 1; r < s; ++r) {
+        x = mulmod(x, x, n);
+        if (x == n - 1)
+            return false;
     }
 
-    return 1;
+    return true;
 }
 
-// for randomized, generate nos. in [2,n-2]
-bool MillerRabin(int n)
-{
-    if(n<2)
-        return 0;
+// for randomized, generate nos. in [2, n-2]
+bool millerRabin(int n) {
+    if (n < 2) return false;
 
-    int r=0;
-    int d=n-1;
-    while((d&1)==0)
-    {
-        d>>=1;
+    int r = 0;
+    int d = n - 1;
+    while ((d & 1) == 0) {
+        d >>= 1;
         r++;
     }
 
-    vi bases={2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};      // {2, 3, 5, 7} for 32-bit
-    for(int a:bases)
-    {
-        if(n==a)            // since, "a" is prime
-            return 1;
-        if(check_composite(n,a,d,r))
-            return 0;
+    vi bases = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}; // {2, 3, 5, 7} for 32-bit
+    for (int a : bases) {
+        if (n == a) // since, "a" is prime
+            return true;
+        if (check_composite(n, a, d, r))
+            return false;
     }
 
-    return 1;
+    return true;
 }
